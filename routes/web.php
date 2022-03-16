@@ -13,6 +13,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-});
+Route::get('/{any}', [\App\Http\Controllers\SpaController::class, 'index'])->where('any', '.*')->name('index');
