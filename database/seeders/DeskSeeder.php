@@ -4,15 +4,15 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
+class DeskSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Run the database seeds.
      *
      * @return void
      */
     public function run()
     {
-        \App\Models\Desk::factory()->count(10)->create();
+        \App\Models\Desk::factory()->count(50)->create();
     }
 }
