@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\DeskList;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CardFactory extends Factory
@@ -15,7 +16,8 @@ class CardFactory extends Factory
     {
         return [
             'name' => $this->faker->jobTitle(),
-            'desk_lists_id' => $this->faker->randomNumber(),
+            'desk_lists_id' => DeskList::factory(),
+//            'desk_lists_id' => DeskList::inRandomOrder()->first()->id,
         ];
     }
 }

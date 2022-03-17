@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Card;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TaskFactory extends Factory
@@ -15,7 +16,8 @@ class TaskFactory extends Factory
     {
         return [
             'name' => $this->faker->jobTitle(),
-//            'card_id' => $this->faker->randomNumber(),
+            'card_id' => Card::factory(),
+//            'card_id' => Card::inRandomOrder()->first()->id,
         ];
     }
 }
