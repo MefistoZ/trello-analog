@@ -27,6 +27,9 @@ class Desk extends Model
         'updated_at',
     ];
 
-
+    public function lists()
+    {
+        return $this->hasMany(DeskList::class);
+    }
 
 }
