@@ -4,9 +4,10 @@
     <div class="row">
         <div class="col-lg-4" v-for="desk in desks">
             <div class="card mt-3" style="width: 18rem;">
-                <a href="#" class="card-body">
-                    <h5 class="card-title">{{ desk.name }}</h5>
-                </a>
+                <router-link class="nav-item nav-link active" :to="{name: 'ShowDesk', params: {deskId: desk.id}}">
+                    <h4 class="card-title">{{ desk.name }}</h4>
+                </router-link>
+
             </div>
         </div>
     </div>

@@ -8,6 +8,7 @@ Vue.use(VueRouter)
 
 import Home from "./components/Home";
 import Desks from "./components/desks/Desks";
+import ShowDesk from "./components/desks/ShowDesk";
 
 const routes = [
     {
@@ -19,6 +20,12 @@ const routes = [
         path: '/desks',
         name: 'desks',
         component: Desks
+    },
+    {
+        path: '/desks/:deskId',
+        name: 'ShowDesk',
+        component: ShowDesk,
+        props: true
     }
 ]
 
