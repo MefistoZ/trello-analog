@@ -16,6 +16,7 @@ class DeskList extends Model
      */
     protected $fillable = [
         'name',
+        'desk_id',
     ];
 
     /**
