@@ -27,9 +27,13 @@
         <div class="row">
             <div class="col-lg-4" v-for="deskList in deskLists">
                 <div class="card mt-3">
-                    <a href="#" class="card-body">
-                        <h4 class="card-title">{{ deskList.name }}</h4>
-                    </a>
+                    <div class="card-body">
+                        <form @submit.prevent="updateDeskList(deskList.id, deskList.name)" v-if="deskListInputId === deskList.id">
+                            <input type="text" v-model="deskList.name" class="form-control"
+                                   placeholder="Введите название списка" >
+                        </form>
+                        <h4 v-else class="card-title" style="cursor: pointer" title="Редактировать" @click="deskListInputId = deskList.id">{{ deskList.name }}</h4>
+                    </div>
                     <button type="button" @click="deleteDeskList(deskList.id)" class="btn btn-danger">Удалить</button>
                 </div>
             </div>
@@ -58,7 +62,8 @@ export default {
             errored: false,
             errors: [],
             loading: true,
-            deskLists: []
+            deskLists: [],
+            deskListInputId: null,
         }
     },
     methods: {
@@ -146,6 +151,26 @@ export default {
                         this.loading = false;
                     })
             }
+        },
+        updateDeskList(deskListId, deskListName) {
+            axios.post('/api/v1/desk-lists/' + deskListId, {
+                _method: 'PUT',
+                name: deskListName
+            })
+                .then(response => {
+                    this.deskListInputId = null
+                })
+                .catch(error => {
+                    console.log(error)
+                    if (error.response.data.errors.name) {
+                        this.errors = []
+                        this.errors.push(error.response.data.errors.name[0])
+                    }
+                    this.errored = true;
+                })
+                .finally(() => {
+                    this.loading = false;
+                })
         }
     },
     mounted() {
