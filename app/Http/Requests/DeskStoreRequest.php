@@ -24,7 +24,7 @@ class DeskStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|max:255|min:3|unique:desks,name',
+            'name' => 'required|max:255|min:3|unique:desks,name,'.$this->desk->id,
         ];
     }
 

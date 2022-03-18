@@ -1,5 +1,6 @@
 <template>
     <div class="form-group">
+        <h1>{{name}}</h1>
         <input type="text" @blur="saveName" v-model="name" class="form-control" :class="{ 'is-invalid': $v.name.$error }">
         <div class="invalid-feedback" v-if="!$v.name.required">
             Обязательное поле.
@@ -9,6 +10,10 @@
         </div>
         <div class="spinner-grow text-primary" role="status" v-if="loading">
             <span class="sr-only">Loading...</span>
+        </div>
+        <div class="alert alert-danger mt-3" role="alert" v-if="errored">
+            Ошибка загрузки данных! <br>
+            {{ errors[0] }}
         </div>
     </div>
 </template>
@@ -23,6 +28,7 @@ export default {
         return {
             name: null,
             errored: false,
+            errors: [],
             loading: true,
         }
     },
@@ -41,6 +47,10 @@ export default {
                 })
                 .catch(error => {
                     console.log(error)
+                    if (error.response.data.errors.name) {
+                        this.errors = []
+                        this.errors.push(error.response.data.errors.name[0])
+                    }
                     this.errored = true;
                 })
                 .finally(() => {
