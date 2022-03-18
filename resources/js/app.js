@@ -2,9 +2,11 @@ require('./bootstrap');
 
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import Vuelidate from 'vuelidate'
 // window.Vue = require('vue').default;
 
 Vue.use(VueRouter)
+Vue.use(Vuelidate)
 
 import Home from "./components/Home";
 import Desks from "./components/desks/Desks";
