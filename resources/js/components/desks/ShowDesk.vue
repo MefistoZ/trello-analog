@@ -41,7 +41,7 @@
                                 <h4 class="card-title" style="cursor: pointer" title="Редактировать">
                                     {{ card.name }}
                                 </h4>
-                                <button type="button" class="btn btn-secondary btn-danger">Удалить</button>
+                                <button type="button" @click="deleteCard(card.id)" class="btn btn-secondary btn-danger">Удалить</button>
                             </div>
                         </div>
                         <form @submit.prevent="addNewCard(deskList.id)">
@@ -194,6 +194,23 @@ export default {
                 })
                     .then(response => {
                         this.deskLists = [];
+                        this.getDeskLists()
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        this.errored = true;
+                    })
+                    .finally(() => {
+                        this.loading = false;
+                    })
+            }
+        },
+        deleteCard(cardId) {
+            if (confirm('Вы действительно хотите удалить список?')) {
+                axios.post('/api/v1/cards/' + cardId, {
+                    _method: 'DELETE'
+                })
+                    .then(response => {
                         this.getDeskLists()
                     })
                     .catch(error => {
