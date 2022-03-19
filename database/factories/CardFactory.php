@@ -16,7 +16,7 @@ class CardFactory extends Factory
     {
         return [
             'name' => $this->faker->jobTitle(),
-            'desk_lists_id' => DeskList::factory(),
+            'desk_list_id' => DeskList::factory(),
 //            'desk_lists_id' => DeskList::inRandomOrder()->first()->id,
         ];
     }

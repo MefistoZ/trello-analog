@@ -27,4 +27,9 @@ class DeskList extends Model
     protected $hidden = [
         'updated_at',
     ];
+
+    public function cards()
+    {
+        return $this->hasMany(Card::class);
+    }
 }
