@@ -12,7 +12,7 @@
 
         <form @submit.prevent="addNewDeskList" class="mt-3">
             <div class="form-group mb-2">
-                <input type="text" v-model="deskListName" class="form-control" id="nameDesk"
+                <input type="text" v-model="deskListName" class="form-control"
                        placeholder="Введите название списка" :class="{ 'is-invalid': $v.deskListName.$error }">
                 <div class="invalid-feedback" v-if="!$v.deskListName.required">
                     Обязательное поле.
@@ -44,9 +44,15 @@
                                 <button type="button" class="btn btn-secondary btn-danger">Удалить</button>
                             </div>
                         </div>
-                        <form>
-                            <input type="text" class="form-control"
-                                   placeholder="Введите название карточки" >
+                        <form @submit.prevent="addNewCard(deskList.id)">
+                            <input v-model="cardNames[deskList.id]" type="text" class="form-control"
+                                   placeholder="Введите название карточки" :class="{ 'is-invalid': $v.cardNames.$each[deskList.id].$error }">
+                            <div class="invalid-feedback" v-if="!$v.cardNames.$each[deskList.id].required">
+                                Обязательное поле.
+                            </div>
+                            <div class="invalid-feedback" v-if="!$v.cardNames.$each[deskList.id].maxLength">
+                                Макс. кол-во символов: {{ $v.cardNames.$each[deskList.id].$params.maxLength.max }}.
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -78,9 +84,36 @@ export default {
             loading: true,
             deskLists: [],
             deskListInputId: null,
+            cardNames: [],
         }
     },
     methods: {
+        addNewCard(deskListId) {
+            this.$v.cardNames.$each[deskListId].$touch()
+            if (this.$v.cardNames.$each[deskListId].$anyError) {
+                return;
+            }
+
+            axios.post('/api/v1/cards/', {
+                name: this.cardNames[deskListId],
+                desk_list_id: deskListId
+            })
+                .then(response => {
+                    this.$v.$reset()
+                    this.getDeskLists()
+                })
+                .catch(error => {
+                    console.log(error)
+                    if (error.response.data.errors.name) {
+                        this.errors = []
+                        this.errors.push(error.response.data.errors.name[0])
+                    }
+                    this.errored = true;
+                })
+                .finally(() => {
+                    this.loading = false;
+                })
+        },
         getDeskLists() {
             axios.get('/api/v1/desk-lists', {
                 params: {
@@ -89,6 +122,10 @@ export default {
             })
                 .then(response => {
                     this.deskLists = response.data.data
+                    console.log(this.deskLists);
+                    this.deskLists.forEach(el => {
+                        this.cardNames[el.id] = ''
+                    })
                 })
                 .catch(error => {
                     console.log(error)
@@ -103,8 +140,8 @@ export default {
                 })
         },
         saveName() {
-            this.$v.$touch()
-            if (this.$v.$anyError) {
+            this.$v.name.$touch()
+            if (this.$v.name.$anyError) {
                 return;
             }
             axios.post('/api/v1/desks/' + this.deskId, {
@@ -127,8 +164,8 @@ export default {
                 })
         },
         addNewDeskList() {
-            this.$v.$touch()
-            if (this.$v.$anyError) {
+            this.$v.deskListName.$touch()
+            if (this.$v.deskListName.$anyError) {
                 return;
             }
             axios.post('/api/v1/desk-lists/', {
@@ -136,8 +173,10 @@ export default {
                 desk_id: this.deskId
             })
                 .then(response => {
+                    this.$v.$reset()
                     this.deskListName = '';
                     this.deskLists = [];
+                    this.cardNames = [];
                     this.getDeskLists()
                 })
                 .catch(error => {
@@ -209,6 +248,12 @@ export default {
         deskListName: {
             required,
             maxLength: maxLength(255)
+        },
+        cardNames: {
+            $each: {
+                required,
+                maxLength: maxLength(255)
+            }
         }
     }
 }

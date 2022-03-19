@@ -16,7 +16,7 @@ class Card extends Model
      */
     protected $fillable = [
         'name',
-        'desk_lists_id'
+        'desk_list_id'
     ];
 
     /**
