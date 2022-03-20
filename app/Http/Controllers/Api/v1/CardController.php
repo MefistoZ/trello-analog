@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CardStoreRequest;
+use App\Http\Requests\CardUpdateRequest;
 use App\Http\Resources\CardResource;
+use App\Http\Resources\DeskListResource;
 use App\Models\Card;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -34,7 +36,7 @@ class CardController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @return CardResource
      */
     public function store(CardStoreRequest $request)
@@ -48,11 +50,11 @@ class CardController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return CardResource
      */
-    public function show($id)
+    public function show(Card $card)
     {
-        //
+        return new CardResource($card);
     }
 
     /**
@@ -69,13 +71,14 @@ class CardController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param CardUpdateRequest $request
+     * @param Card $card
+     * @return CardResource
      */
-    public function update(Request $request, $id)
+    public function update(CardUpdateRequest $request, Card $card)
     {
-        //
+        $card->update($request->validated());
+        return new CardResource($card);
     }
 
     /**

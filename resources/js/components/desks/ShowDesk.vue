@@ -2,7 +2,6 @@
     <div class="form-group">
 
 
-
         <h1>{{ name }}</h1>
         <input type="text" @blur="saveName" v-model="name" class="form-control"
                :class="{ 'is-invalid': $v.name.$error }">
@@ -31,29 +30,39 @@
             <div class="col-lg-4" v-for="deskList in deskLists">
                 <div class="card mt-3">
                     <div class="card-body">
-                        <form @submit.prevent="updateDeskList(deskList.id, deskList.name)" v-if="deskListInputId === deskList.id">
+                        <form @submit.prevent="updateDeskList(deskList.id, deskList.name)"
+                              v-if="deskListInputId === deskList.id">
                             <input type="text" v-model="deskList.name" class="form-control"
-                                   placeholder="Введите название списка" >
+                                   placeholder="Введите название списка">
                         </form>
-                        <h4 v-else class="card-title" style="cursor: pointer" title="Редактировать" @click="deskListInputId = deskList.id">{{ deskList.name }}
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M11.013 1.427a1.75 1.75 0 012.474 0l1.086 1.086a1.75 1.75 0 010 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 01-.927-.928l.929-3.25a1.75 1.75 0 01.445-.758l8.61-8.61zm1.414 1.06a.25.25 0 00-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 000-.354l-1.086-1.086zM11.189 6.25L9.75 4.81l-6.286 6.287a.25.25 0 00-.064.108l-.558 1.953 1.953-.558a.249.249 0 00.108-.064l6.286-6.286z"></path></svg>
+                        <h4 v-else class="card-title" style="cursor: pointer" title="Редактировать"
+                            @click="deskListInputId = deskList.id">{{ deskList.name }}
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                                <path fill-rule="evenodd"
+                                      d="M11.013 1.427a1.75 1.75 0 012.474 0l1.086 1.086a1.75 1.75 0 010 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 01-.927-.928l.929-3.25a1.75 1.75 0 01.445-.758l8.61-8.61zm1.414 1.06a.25.25 0 00-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 000-.354l-1.086-1.086zM11.189 6.25L9.75 4.81l-6.286 6.287a.25.25 0 00-.064.108l-.558 1.953 1.953-.558a.249.249 0 00.108-.064l6.286-6.286z"></path>
+                            </svg>
                         </h4>
-                        <button type="button" @click="deleteDeskList(deskList.id)" class="btn btn-danger">Удалить</button>
+                        <button type="button" @click="deleteDeskList(deskList.id)" class="btn btn-danger">Удалить
+                        </button>
                         <div class="card mt-3 mb-3 bg-light" v-for="card in deskList.cards" :key="card.id">
                             <div class="card-body">
                                 <h4 class="card-title" style="cursor: pointer" title="Редактировать">
                                     {{ card.name }}
                                 </h4>
-                                <b-button variant="primary" v-b-modal.modal-prevent-closing>
+
+                                <b-button @click="getCard(card.id)" variant="primary" v-b-modal.modal-prevent-closing>
                                     Открыть
                                 </b-button>
 
-                                <button type="button" @click="deleteCard(card.id)" class="btn btn-secondary btn-danger">Удалить</button>
+                                <button type="button" @click="deleteCard(card.id)" class="btn btn-secondary btn-danger">
+                                    Удалить
+                                </button>
                             </div>
                         </div>
                         <form @submit.prevent="addNewCard(deskList.id)">
                             <input v-model="cardNames[deskList.id]" type="text" class="form-control"
-                                   placeholder="Введите название карточки" :class="{ 'is-invalid': $v.cardNames.$each[deskList.id].$error }">
+                                   placeholder="Введите название карточки"
+                                   :class="{ 'is-invalid': $v.cardNames.$each[deskList.id].$error }">
                             <div class="invalid-feedback" v-if="!$v.cardNames.$each[deskList.id].required">
                                 Обязательное поле.
                             </div>
@@ -76,26 +85,21 @@
         <b-modal
             id="modal-prevent-closing"
             ref="modal"
-            title="Введите ваше имя"
-            @show="resetModal"
-            @hidden="resetModal"
-            @ok="handleOk"
+            title="Имя карточки"
+            hide-footer
         >
-            <form ref="form" @submit.stop.prevent="handleSubmit">
-                <b-form-group
-                    label="Имя"
-                    label-for="name-input"
-                    invalid-feedback="Имя обязательно"
-                    :state="nameState"
-                >
-                    <b-form-input
-                        id="name-input"
-                        v-model="name"
-                        :state="nameState"
-                        required
-                    ></b-form-input>
-                </b-form-group>
-            </form>
+            <b-form-group
+                label="Изменить имя"
+                label-for="name-input"
+                invalid-feedback="Имя обязательно"
+            >
+                <b-form-input
+                    id="name-input"
+                    v-model="currentCard.name"
+                    required
+                    @input="updateCard(currentCard.id, currentCard.name)"
+                ></b-form-input>
+            </b-form-group>
         </b-modal>
     </div>
 </template>
@@ -117,9 +121,23 @@ export default {
             deskLists: [],
             deskListInputId: null,
             cardNames: [],
+            currentCard: [],
         }
     },
     methods: {
+        getCard(id) {
+            axios.get('/api/v1/cards/' + id)
+                .then(response => {
+                    this.currentCard = response.data.data
+                })
+                .catch(error => {
+                    console.log(error)
+                    this.errored = true;
+                })
+                .finally(() => {
+                    this.loading = false;
+                })
+        },
         addNewCard(deskListId) {
             this.$v.cardNames.$each[deskListId].$touch()
             if (this.$v.cardNames.$each[deskListId].$anyError) {
@@ -132,6 +150,26 @@ export default {
             })
                 .then(response => {
                     this.$v.$reset()
+                    this.getDeskLists()
+                })
+                .catch(error => {
+                    console.log(error)
+                    if (error.response.data.errors.name) {
+                        this.errors = []
+                        this.errors.push(error.response.data.errors.name[0])
+                    }
+                    this.errored = true;
+                })
+                .finally(() => {
+                    this.loading = false;
+                })
+        },
+        updateCard(id, cardName) {
+            axios.post('/api/v1/cards/' + id, {
+                _method: 'PUT',
+                name: cardName
+            })
+                .then(response => {
                     this.getDeskLists()
                 })
                 .catch(error => {
