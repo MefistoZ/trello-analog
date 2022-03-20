@@ -1,5 +1,8 @@
 <template>
     <div class="form-group">
+
+
+
         <h1>{{ name }}</h1>
         <input type="text" @blur="saveName" v-model="name" class="form-control"
                :class="{ 'is-invalid': $v.name.$error }">
@@ -41,6 +44,10 @@
                                 <h4 class="card-title" style="cursor: pointer" title="Редактировать">
                                     {{ card.name }}
                                 </h4>
+                                <b-button variant="primary" v-b-modal.modal-prevent-closing>
+                                    Открыть
+                                </b-button>
+
                                 <button type="button" @click="deleteCard(card.id)" class="btn btn-secondary btn-danger">Удалить</button>
                             </div>
                         </div>
@@ -65,6 +72,31 @@
             Ошибка загрузки данных! <br>
             {{ errors[0] }}
         </div>
+
+        <b-modal
+            id="modal-prevent-closing"
+            ref="modal"
+            title="Введите ваше имя"
+            @show="resetModal"
+            @hidden="resetModal"
+            @ok="handleOk"
+        >
+            <form ref="form" @submit.stop.prevent="handleSubmit">
+                <b-form-group
+                    label="Имя"
+                    label-for="name-input"
+                    invalid-feedback="Имя обязательно"
+                    :state="nameState"
+                >
+                    <b-form-input
+                        id="name-input"
+                        v-model="name"
+                        :state="nameState"
+                        required
+                    ></b-form-input>
+                </b-form-group>
+            </form>
+        </b-modal>
     </div>
 </template>
 

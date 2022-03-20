@@ -3,10 +3,17 @@ require('./bootstrap');
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Vuelidate from 'vuelidate'
-// window.Vue = require('vue').default;
+import PortalVue from 'portal-vue'
+import { BootstrapVue, IconsPlugin, ModalPlugin } from 'bootstrap-vue'
+
+import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 Vue.use(VueRouter)
 Vue.use(Vuelidate)
+Vue.use(PortalVue)
+Vue.use(BootstrapVue)
+Vue.use(IconsPlugin)
+Vue.use(ModalPlugin)
 
 import Home from "./components/Home";
 import Desks from "./components/desks/Desks";
