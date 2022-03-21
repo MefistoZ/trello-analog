@@ -99,6 +99,22 @@
                     required
                     @input="updateCard(currentCard.id, currentCard.name)"
                 ></b-form-input>
+                <hr>
+                <form @submit.prevent="addNewTask">
+                    <input v-model="new_task_name" type="text" class="form-control" placeholder="Введите название задачи">
+                    <button type="submit" class="btn btn-success mt-3">Создать</button>
+                </form>
+                <hr>
+
+                <div class="form-check" v-for="task in currentCard.tasks">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        {{ task.name }}
+                    </label>
+                    <button type="button" class="close" @click="deleteTask(task.id)" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
             </b-form-group>
         </b-modal>
     </div>
@@ -122,13 +138,51 @@ export default {
             deskListInputId: null,
             cardNames: [],
             currentCard: [],
+            new_task_name: '',
         }
     },
     methods: {
+        deleteTask(id) {
+            if (confirm('Вы действительно хотите удалить задачу?')) {
+                axios.post('/api/v1/tasks/' + id, {
+                    _method: 'DELETE'
+                })
+                    .then(response => {
+                        this.getCard(this.currentCard.id)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        this.errored = true;
+                    })
+                    .finally(() => {
+                        this.loading = false;
+                    })
+            }
+        },
+        addNewTask() {
+            console.log(this.currentCard.id);
+            axios.post('/api/v1/tasks/', {
+                name: this.new_task_name,
+                card_id: this.currentCard.id
+            })
+                .then(response => {
+                    this.new_task_name = ''
+                    this.currentCard.tasks.push(response.data.data)
+                    this.getDeskLists()
+                })
+                .catch(error => {
+                    console.log(error)
+                    this.errored = true;
+                })
+                .finally(() => {
+                    this.loading = false;
+                })
+        },
         getCard(id) {
             axios.get('/api/v1/cards/' + id)
                 .then(response => {
                     this.currentCard = response.data.data
+                    console.log(this.currentCard);
                 })
                 .catch(error => {
                     console.log(error)

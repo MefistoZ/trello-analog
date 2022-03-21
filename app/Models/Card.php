@@ -27,4 +27,12 @@ class Card extends Model
     protected $hidden = [
         'updated_at',
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
 }
